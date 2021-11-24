@@ -9,19 +9,27 @@ export class User extends BaseEntity {
     id!: number;
 
     @Field()
-    @Column()
+    @Column({
+        length: 55
+    })
     firstname!: string;
 
     @Field()
-    @Column()
+    @Column({
+        length: 55
+    })
     lastname!: string;
 
     @Field()
-    @Column()
+    @Column({
+        length: 100
+    })
     email!: string;
 
     @Field()
-    @Column()
+    @Column({
+        length: 12
+    })
     password!: string;
 
     @Field()
@@ -39,10 +47,8 @@ export class UserInputSignUp {
     password!: string;
 
     @Field()
-    @Column()
     firstname!: string;
 
     @Field()
-    @Column()
     lastname!: string;
 }
