@@ -18,6 +18,7 @@ export class UsersResolver {
   @Mutation(() => User)
   async signup(@Arg("data", () => UserInputSignUp) user: UserInputSignUp): Promise<User> {
     const newUser = this.userRepo.create(user);
+    newUser.password = await argon2.hash(newUser.password);
     await newUser.save();
     return newUser;
   }
