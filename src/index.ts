@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server";
-import { WildersResolver } from "./resolvers/Wilders";
+import { UsersResolver } from "./resolvers/UsersResolver";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 
@@ -12,7 +12,7 @@ async function bootstrap() {
 
   // ... Building schema here
   const schema = await buildSchema({
-    resolvers: [WildersResolver],
+    resolvers: [UsersResolver],
   });
 
   // Create the GraphQL server
