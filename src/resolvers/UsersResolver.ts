@@ -1,6 +1,6 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
-import { User, UserInputSignIn, UserInputSignUp } from "../models/User";
+import { User, UserInputSignUp } from "../models/User";
 import * as argon2 from 'argon2';
 
 @Resolver(User)
@@ -13,13 +13,8 @@ export class UsersResolver {
     }
 
     @Mutation(() => User)
-    async signup(@Arg('firstname') firstname: string, @Arg('lastname') lastname: string, @Arg('email') email: string, @Arg('password') password: string): Promise<User> {
-        const newUser = this.userRepo.create({
-            firstname,
-            lastname,
-            email,
-            password: await argon2.hash(password)
-        });
+    async signup(@Arg('data', () => UserInputSignUp) user: UserInputSignUp): Promise<User> {
+        const newUser = this.userRepo.create(user);
         await newUser.save();
         return newUser;
     }

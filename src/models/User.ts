@@ -31,16 +31,6 @@ export class User extends BaseEntity {
 }
 
 @InputType()
-export class UserInputSignIn {
-    @Field()
-    email!: string;
-
-    @Field()
-    password!: string;
-}
-
-
-@InputType()
 export class UserInputSignUp {
     @Field()
     email!: string;
