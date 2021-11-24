@@ -1,5 +1,6 @@
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Ticket } from './Ticket';
 import { User } from './User';
 
 @ObjectType()
@@ -45,12 +46,19 @@ export class Project extends BaseEntity {
 
     @Field()
     @Column()
-    UserId!: number;
+    userId!: number;
 
-    // @Field()
-    // @ManyToOne(() => User, user => user.projects)
-    // user: User;
+    @Field()
+    @ManyToOne(() => User, user => user.id)
+    userAuthorId: number; // User ?
 
+    @Field(() => Ticket)
+    @OneToMany(() => Ticket, ticket => ticket.id)
+    ticketLinked: Ticket[];
+
+    @Field(() => User)
+    @ManyToMany(() => User, user => user.id)
+    userInProject: User[];
 }
 
 @InputType()

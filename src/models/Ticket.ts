@@ -2,6 +2,8 @@ import { Field, ID, InputType, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Asset } from './Asset';
 import { Comment } from './Comment';
+import { Project } from './Project';
+import { User } from './User';
 
 @ObjectType()
 @Entity()
@@ -47,7 +49,7 @@ export class Ticket extends BaseEntity {
     category!: string;
 
     @Field()
-    @Column()
+    @ManyToOne(() => Project, project => project.id)
     projectLinkedID!: number;
 
     @Field()
@@ -55,8 +57,8 @@ export class Ticket extends BaseEntity {
     userAssignedID!: number;
 
     @Field()
-    @Column()
-    userAuthorID!: number;
+    @ManyToOne(() => User, user => user.id)
+    userAuthorID!: number; // ou User ??
 
     @Field(() => Asset)
     @OneToMany(() => Asset, asset => asset.ticketId)
@@ -64,7 +66,11 @@ export class Ticket extends BaseEntity {
 
     @Field()
     @ManyToOne(() => Comment, comment => comment.id)
-    commentId: number;
+    comments: Comment[];
+
+    @Field()
+    @ManyToOne(() => User, user => user.id)
+    userAssignee: number; //ou User ?
 }
 
 @InputType()

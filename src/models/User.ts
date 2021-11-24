@@ -1,6 +1,8 @@
 import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ERole } from "../types";
+import { Project } from "./Project";
+import { Ticket } from "./Ticket";
 
 // Nécessaire pour utiliser l'enum
 registerEnumType(ERole, {
@@ -41,6 +43,15 @@ export class User extends BaseEntity {
     @Field(() => ERole)
     @Column()
     role: ERole = ERole.DEV;
+
+    @Field(() => Ticket)
+    @OneToMany(() => Ticket, ticket => ticket.id)
+    ticketAssigned: Ticket[];
+
+    @Field(() => Project)
+    @ManyToMany(() => Project, project => project.id)
+    projectContribution: Project[];
+
 }
 
 @InputType()
