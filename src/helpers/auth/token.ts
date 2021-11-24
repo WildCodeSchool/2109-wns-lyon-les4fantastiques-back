@@ -1,6 +1,8 @@
 import * as jwt from "jsonwebtoken";
 
-const privateKey = "supersecret123";
+require("dotenv").config();
+
+const privateKey = process.env.PRIVATE_KEY;
 export const generateToken = (userId: number): string => {
   return jwt.sign({ id: userId }, privateKey);
 };
