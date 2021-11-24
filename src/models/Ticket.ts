@@ -58,7 +58,7 @@ export class Ticket extends BaseEntity {
     @Column()
     userAuthorID!: number;
 
-    @Field()
+    @Field(() => Asset)
     @OneToMany(() => Asset, asset => asset.ticketId)
     asset: Asset[];
 

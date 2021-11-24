@@ -1,9 +1,9 @@
 import { Field, InputType } from "type-graphql";
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity} from "typeorm";
 import { Ticket } from "./Ticket";
 
 @Entity()
-export class Asset {
+export class Asset extends BaseEntity {
     
     @Field()
     @PrimaryGeneratedColumn()
@@ -21,7 +21,7 @@ export class Asset {
     })
     filename: string;
 
-    @Field()
+    @Field(() => Ticket)
     @ManyToOne(() => Ticket, ticket => ticket.id)
     ticketId: Ticket;
 }
