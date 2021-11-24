@@ -1,5 +1,11 @@
-import { Field, ID, InputType, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
+import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ERole } from "../types";
+
+// Nécessaire pour utiliser l'enum
+registerEnumType(ERole, {
+  name: "ERole",
+});
 
 @ObjectType()
 @Entity()
@@ -32,10 +38,9 @@ export class User extends BaseEntity {
     })
     password!: string;
 
-    @Field()
+    @Field(() => ERole)
     @Column()
-    role!: string;
-
+    role: ERole = ERole.DEV;
 }
 
 @InputType()
