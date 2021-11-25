@@ -1,8 +1,8 @@
 import { AuthChecker } from "type-graphql";
 import { getRepository, OneToMany } from "typeorm";
-import { User } from "../models/User";
-import { ContextType } from "../types";
-import { verifyToken } from "./auth/token";
+import { User } from "../../models/User";
+import { ContextType } from "../../types";
+import { verifyToken } from "./token";
 
 export const customAuthChecker: AuthChecker<ContextType> = async ({ root, args, context, info }, roles) => {
   // here we can read the user from context

@@ -3,7 +3,7 @@ import { ApolloServer } from "apollo-server";
 import { UsersResolver } from "./resolvers/UsersResolver";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-import { customAuthChecker } from "./helpers/customAuthChecker";
+import { customAuthChecker } from "./helpers/auth/customAuthChecker";
 
 const PORT = process.env.PORT || 4000;
 

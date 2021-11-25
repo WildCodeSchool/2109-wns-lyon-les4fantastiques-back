@@ -1,3 +1,4 @@
+import { IsEmail, Length, Matches } from "class-validator";
 import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
 import { BaseEntity, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ERole } from "../types";
@@ -30,7 +31,8 @@ export class User extends BaseEntity {
 
     @Field()
     @Column({
-        length: 100
+        length: 100,
+        unique: true
     })
     email!: string;
 
@@ -63,15 +65,34 @@ export class User extends BaseEntity {
 
 @InputType()
 export class UserInputSignUp {
-    @Field()
-    email!: string;
+  @Field()
+  @IsEmail()
+  email!: string;
 
-    @Field()
-    password!: string;
+  @Field()
+  @Matches(/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/, {
+    message: "Votre mot de passe doit contenir au moins 8 caractères, une miniscule, une majuscule, un chiffre aisni qu'un caractère spécial",
+  })
+  password!: string;
 
-    @Field()
-    firstname!: string;
+  @Field()
+  @Column()
+  @Length(2, 50)
+  @Matches(/^([^0-9]*)$/, { message: "Votre nom ne peut pas contenir de chiffres" })
+  firstname!: string;
 
-    @Field()
-    lastname!: string;
+  @Field()
+  @Column()
+  @Length(2, 50)
+  @Matches(/^([^0-9]*)$/, { message: "Votre nom ne peut pas contenir de chiffres" })
+  lastname!: string;
+}
+@InputType()
+export class UserInputSignIn {
+  @Field()
+  @IsEmail()
+  email!: string;
+
+  @Field()
+  password!: string;
 }
