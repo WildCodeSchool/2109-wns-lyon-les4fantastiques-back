@@ -21,13 +21,13 @@ export class Comment extends BaseEntity {
     @Column()
     creationDate!: Date;
 
-    @Field()
+    @Field(() => Ticket)
     @OneToMany(() => Ticket, ticket => ticket.id)
-    ticketLinkedId: number;
+    ticketLinkedId: Ticket;
 
-    @Field()
+    @Field(() => User)
     @ManyToOne(() => User, user => user.id)
-    userAuthorId: number;
+    userAuthorId: User;
 }
 
 @InputType()
@@ -35,9 +35,9 @@ export class CommentInputCreation {
     @Field()
     description!: string;
 
-    @Field()
-    ticketLinkedId: number;
+    @Field(() => Ticket)
+    ticketLinkedId: Ticket;
 
-    @Field()
-    userAuthorId: number;
+    @Field(() => User)
+    userAuthorId: User;
 }

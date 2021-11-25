@@ -46,12 +46,19 @@ export class User extends BaseEntity {
 
     @Field(() => Ticket)
     @OneToMany(() => Ticket, ticket => ticket.id)
-    ticketAssigned: Ticket[];
+    ticketsAssigned: Ticket[];
 
     @Field(() => Project)
     @ManyToMany(() => Project, project => project.id)
-    projectContribution: Project[];
+    projectsContribution: Project[];
 
+    @Field(() => Ticket)
+    @OneToMany(() => Ticket, ticket => ticket.id)
+    ticketsCreated: Ticket[];
+
+    @Field(() => Project)
+    @ManyToMany(() => Project, project => project.id)
+    projectsCreated: Project[];
 }
 
 @InputType()

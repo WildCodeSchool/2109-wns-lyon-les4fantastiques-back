@@ -24,13 +24,13 @@ export class Notification extends BaseEntity {
     @Column()
     isRead!: boolean;
 
-    @Field()
+    @Field(() => User)
     @OneToMany(() => User, user => user.id)
-    UseriD!: number;
+    Userid!: User;
 
-    @Field()
+    @Field(() => Ticket)
     @OneToMany(() => Ticket, ticket => ticket.id)
-    TicketiD!: number;
+    Ticketid!: Ticket;
 }
 
 @InputType()
@@ -44,9 +44,9 @@ export class NotificationInputCreation {
     @Field()
     isRead!: boolean;
 
-    @Field()
-    UseriD!: number;
+    @Field(() => User)
+    Userid!: User;
 
-    @Field()
-    TicketiD!: number;
+    @Field(() => Ticket)
+    Ticketid!: Ticket;
 }

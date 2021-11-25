@@ -1,9 +1,16 @@
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
+import { registerEnumType } from 'type-graphql/dist/decorators/enums';
 import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ECategory } from '../types';
 import { Asset } from './Asset';
 import { Comment } from './Comment';
 import { Project } from './Project';
 import { User } from './User';
+
+// Nécessaire pour utiliser l'enum
+registerEnumType(ECategory, {
+    name: "ECategory",
+  });
 
 @ObjectType()
 @Entity()
@@ -46,31 +53,27 @@ export class Ticket extends BaseEntity {
 
     @Field()
     @Column()
-    category!: string;
+    category: ECategory = ECategory.BUG;
 
-    @Field()
+    @Field(() => Project)
     @ManyToOne(() => Project, project => project.id)
-    projectLinkedID!: number;
+    projectLinkedId!: Project;
 
-    @Field()
-    @Column()
-    userAssignedID!: number;
-
-    @Field()
+    @Field(() => User)
     @ManyToOne(() => User, user => user.id)
-    userAuthorID!: number; // ou User ??
+    userAuthorId!: User;
 
-    @Field(() => Asset)
-    @OneToMany(() => Asset, asset => asset.ticketId)
-    asset: Asset[];
+    // @Field(() => [Asset])
+    // @OneToMany(() => Asset, asset => asset.ticketLinkedId)
+    // assets: Asset[];
 
-    @Field()
+    @Field(() => [Comment])
     @ManyToOne(() => Comment, comment => comment.id)
     comments: Comment[];
 
-    @Field()
+    @Field(() => User)
     @ManyToOne(() => User, user => user.id)
-    userAssignee: number; //ou User ?
+    userAssignee: User;
 }
 
 @InputType()
@@ -87,9 +90,6 @@ export class TicketInputCreation {
     @Field()
     timeEstimation!: number;
 
-    @Field()
-    category!: string;
-
-    @Field()
-    project_linked!: number;
+    @Field(() => Project)
+    projectLinkedId!: Project;
 }

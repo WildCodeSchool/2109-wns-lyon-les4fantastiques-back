@@ -44,13 +44,9 @@ export class Project extends BaseEntity {
     @Column()
     isClosed!: boolean;
 
-    @Field()
-    @Column()
-    userId!: number;
-
-    @Field()
+    @Field(() => User)
     @ManyToOne(() => User, user => user.id)
-    userAuthorId: number; // User ?
+    userAuthorId: User; 
 
     @Field(() => Ticket)
     @OneToMany(() => Ticket, ticket => ticket.id)
@@ -67,17 +63,11 @@ export class ProjectInputCreation {
     name!: string;
 
     @Field()
-    timeEstimation!: number;
-
-    @Field()
-    dueDate!: Date;
-
-    @Field()
     isClosed!: boolean;
 
-    @Field()
-    UserId!: number;
+    @Field(() => User)
+    userAuthorId!: User;
 
+    @Field(() => User)
+    userInProject: User[];
 }
-
-// TODO tableau d'User 

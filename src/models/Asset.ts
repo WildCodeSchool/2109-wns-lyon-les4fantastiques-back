@@ -23,7 +23,7 @@ export class Asset extends BaseEntity {
 
     @Field(() => Ticket)
     @ManyToOne(() => Ticket, ticket => ticket.id)
-    ticketId: Ticket;
+    ticketLinkedId: Ticket;
 }
 
 
@@ -32,8 +32,8 @@ export class AssetInputUpload {
     @Field()
     url: string;
     
-    @Field()
-    ticketId: Ticket;
+    @Field(() => Ticket)
+    ticketLinkedId: Ticket;
 
     @Field()
     filename: string;

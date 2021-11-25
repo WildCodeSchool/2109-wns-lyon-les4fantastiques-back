@@ -10,3 +10,8 @@ export enum ERole {
   PO = "PO",
   DEV = "DEV",
 }
+
+export enum ECategory {
+  BUG = "BUG",
+  FEATURE = "FEATURE",
+}
