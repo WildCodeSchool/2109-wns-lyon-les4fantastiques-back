@@ -1,4 +1,4 @@
-import { Arg, Authorized, ID, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
 import { Project, ProjectInputCreation } from '../models/Project'
 import { User } from "../models/User";
@@ -9,6 +9,8 @@ export class ProjectsResolver {
     private projectRepo = getRepository(Project);
     private userRepo = getRepository(User);
 
+
+      // QUERIES
     // retourne tous les projets
     @Authorized(["PO", "ADMIN"])
     @Query(() => [Project])
@@ -23,11 +25,12 @@ export class ProjectsResolver {
         return await this.projectRepo.findOne(id);
     }
 
+    //MUTATIONS
     //crée un projet
-    //@Authorized(["PO", "ADMIN"])
+    @Authorized(["PO", "ADMIN"])
     @Mutation(() => Project)
-    async createProject(@Arg('data', () => ProjectInputCreation) project: ProjectInputCreation, @Arg('userId', () => ID) userId: number): Promise<Project> {
-        const user = await this.userRepo.findOne(userId);
+    async createProject(@Arg("data", () => ProjectInputCreation) project: ProjectInputCreation, @Ctx() context: { user: User }): Promise<Project> {
+        const user = await this.userRepo.findOne(context.user.id);
         const newProject = this.projectRepo.create(project);
         newProject.creationDate = new Date();
         newProject.userAuthor = user;

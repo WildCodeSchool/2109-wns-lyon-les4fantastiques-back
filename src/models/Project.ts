@@ -36,6 +36,7 @@ export class Project extends BaseEntity {
     @Column()
     percentageTaskAccomplished: number = 0;
 
+    // TODO à supprimer
     @Field()
     @Column()
     dueDate: Date = new Date();
@@ -46,9 +47,9 @@ export class Project extends BaseEntity {
 
     @Field(() => User)
     @ManyToOne(() => User, user => user.projectsCreated)
-   // @RelationId((user: User) => user.projectsCreated)
     userAuthor: User; 
 
+    // TODO à supprimer pour le tri
     @Field(() => [Ticket])
     @OneToMany(() => Ticket, ticket => ticket.id)
     ticketLinked: Ticket[];
