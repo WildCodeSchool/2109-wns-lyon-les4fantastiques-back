@@ -1,7 +1,8 @@
 import { IsEmail, Length, Matches } from "class-validator";
 import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from "typeorm";
 import { ERole } from "../types";
+import { Project } from "./Project";
 
 // Nécessaire pour utiliser l'enum
 registerEnumType(ERole, {
@@ -11,29 +12,42 @@ registerEnumType(ERole, {
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id!: number;
+    @Field(() => ID)
+    @PrimaryGeneratedColumn()
+    id!: number;
 
-  @Field()
-  @Column()
-  firstname!: string;
+    @Field()
+    @Column({
+        length: 55
+    })
+    firstname!: string;
 
-  @Field()
-  @Column()
-  lastname!: string;
+    @Field()
+    @Column({
+        length: 55
+    })
+    lastname!: string;
 
-  @Field()
-  @Column({ unique: true })
-  email!: string;
+    @Field()
+    @Column({
+        length: 100,
+        unique: true
+    })
+    email!: string;
 
-  @Field()
-  @Column()
-  password!: string;
+    @Field()
+    @Column({
+        length: 12
+    })
+    password!: string;
 
-  @Field(() => ERole)
-  @Column()
-  role: ERole = ERole.DEV;
+    @Field(() => ERole)
+    @Column()
+    role: ERole = ERole.DEV;
+
+    @Field(() => [Project])
+    @OneToMany(() => Project, project => project.userAuthor, { lazy: true })
+    projectsCreated: Promise<Project[]>;
 }
 
 @InputType()
