@@ -68,6 +68,9 @@ export class ProjectInputCreation {
     @Field(() => User)
     userAuthorId!: User;
 
-    @Field(() => User)
+    @Field(() => [User])
     userInProject: User[];
+
+    // @Field()
+    // timeEstimation : number;
 }
