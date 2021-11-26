@@ -60,7 +60,7 @@ export class Ticket extends BaseEntity {
     projectLinkedId!: Project;
 
     @Field(() => User)
-    @ManyToOne(() => User, user => user.id)
+    @ManyToOne(() => User, user => user.ticketsCreated)
     userAuthorId!: User;
 
     // @Field(() => [Asset])

@@ -1,5 +1,5 @@
-import { Field, ID, InputType, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, ID, InputType, Int, ObjectType } from 'type-graphql';
+import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 import { Ticket } from './Ticket';
 import { User } from './User';
 
@@ -20,41 +20,42 @@ export class Project extends BaseEntity {
     @Column()
     creationDate!: Date;
 
-    @Field()
+    @Field(type => Int)
     @Column()
     timeEstimation!: number;
 
-    @Field()
+    @Field(type => Int)
     @Column()
-    timeSpent!: number;
+    timeSpent: number = 0;
+
+    @Field(type => Int)
+    @Column()
+    percentageTimeSpent: number = 0;
+
+    @Field(type => Int)
+    @Column()
+    percentageTaskAccomplished: number = 0;
 
     @Field()
     @Column()
-    percentageTimeSpent!: number;
-
-    @Field()
-    @Column()
-    percentageTaskAccomplished!: number;
-
-    @Field()
-    @Column()
-    dueDate!: Date;
+    dueDate: Date = new Date();
 
     @Field()
     @Column()
     isClosed!: boolean;
 
     @Field(() => User)
-    @ManyToOne(() => User, user => user.id)
-    userAuthorId: User; 
+    @ManyToOne(() => User, user => user.projectsCreated)
+   // @RelationId((user: User) => user.projectsCreated)
+    userAuthor: User; 
 
-    @Field(() => Ticket)
+    @Field(() => [Ticket])
     @OneToMany(() => Ticket, ticket => ticket.id)
     ticketLinked: Ticket[];
 
-    @Field(() => User)
-    @ManyToMany(() => User, user => user.id)
-    userInProject: User[];
+    @Field(() => [User])
+    @ManyToMany(() => User, user => user.projectsContribution)
+    usersInProject: User[];
 }
 
 @InputType()
@@ -65,12 +66,9 @@ export class ProjectInputCreation {
     @Field()
     isClosed!: boolean;
 
-    @Field(() => User)
-    userAuthorId!: User;
+    // @Field(() => [User])
+    // userInProject: User[];
 
-    @Field(() => [User])
-    userInProject: User[];
-
-    // @Field()
-    // timeEstimation : number;
+    @Field(type => Int)
+    timeEstimation : number;
 }

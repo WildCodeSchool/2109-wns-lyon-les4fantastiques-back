@@ -1,6 +1,6 @@
 import { IsEmail, Length, Matches } from "class-validator";
 import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from "typeorm";
 import { ERole } from "../types";
 import { Project } from "./Project";
 import { Ticket } from "./Ticket";
@@ -46,21 +46,22 @@ export class User extends BaseEntity {
     @Column()
     role: ERole = ERole.DEV;
 
-    @Field(() => Ticket)
+    @Field(() => [Ticket])
     @OneToMany(() => Ticket, ticket => ticket.id)
     ticketsAssigned: Ticket[];
 
-    @Field(() => Project)
-    @ManyToMany(() => Project, project => project.id)
+    @Field(() => [Project])
+    @ManyToMany(() => Project, project => project.usersInProject)
+    @JoinTable()
     projectsContribution: Project[];
 
-    @Field(() => Ticket)
-    @OneToMany(() => Ticket, ticket => ticket.id)
+    @Field(() => [Ticket])
+    @OneToMany(() => Ticket, ticket => ticket.userAuthorId)
     ticketsCreated: Ticket[];
 
-    @Field(() => Project)
-    @ManyToMany(() => Project, project => project.id)
-    projectsCreated: Project[];
+    @Field(() => [Project])
+    @OneToMany(() => Project, project => project.userAuthor, { lazy: true })
+    projectsCreated: Promise<Project[]>;
 }
 
 @InputType()
