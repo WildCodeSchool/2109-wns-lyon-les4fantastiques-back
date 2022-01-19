@@ -8,7 +8,6 @@ RUN npm i
 COPY src src
 COPY .env .env
 COPY tsconfig.json tsconfig.json
-COPY database.sqlite database.sqlite
 COPY ormconfig.json ormconfig.json
 
 CMD npm start
