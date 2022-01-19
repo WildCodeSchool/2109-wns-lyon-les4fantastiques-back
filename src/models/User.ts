@@ -1,6 +1,22 @@
 import { IsEmail, Length, Matches } from "class-validator";
-import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import {
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from "type-graphql";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from "typeorm";
 import { ERole } from "../types";
 import { Project } from "./Project";
 
@@ -12,42 +28,42 @@ registerEnumType(ERole, {
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-    @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+  @Field(() => ID)
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @Field()
-    @Column({
-        length: 55
-    })
-    firstname!: string;
+  @Field()
+  @Column({
+    length: 55,
+  })
+  firstname!: string;
 
-    @Field()
-    @Column({
-        length: 55
-    })
-    lastname!: string;
+  @Field()
+  @Column({
+    length: 55,
+  })
+  lastname!: string;
 
-    @Field()
-    @Column({
-        length: 100,
-        unique: true
-    })
-    email!: string;
+  @Field()
+  @Column({
+    length: 100,
+    unique: true,
+  })
+  email!: string;
 
-    @Field()
-    @Column({
-        length: 12
-    })
-    password!: string;
+  @Field()
+  @Column({
+    length: 100,
+  })
+  password!: string;
 
-    @Field(() => ERole)
-    @Column()
-    role: ERole = ERole.DEV;
+  @Field(() => ERole)
+  @Column()
+  role: ERole = ERole.DEV;
 
-    @Field(() => [Project])
-    @OneToMany(() => Project, project => project.userAuthor, { lazy: true })
-    projectsCreated: Promise<Project[]>;
+  @Field(() => [Project])
+  @OneToMany(() => Project, (project) => project.userAuthor, { lazy: true })
+  projectsCreated: Promise<Project[]>;
 }
 
 @InputType()
@@ -57,21 +73,29 @@ export class UserInputSignUp {
   email!: string;
 
   @Field()
-  @Matches(/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/, {
-    message: "Votre mot de passe doit contenir au moins 8 caractères, une miniscule, une majuscule, un chiffre aisni qu'un caractère spécial",
-  })
+  @Matches(
+    /^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/,
+    {
+      message:
+        "Votre mot de passe doit contenir au moins 8 caractères, une miniscule, une majuscule, un chiffre aisni qu'un caractère spécial",
+    }
+  )
   password!: string;
 
   @Field()
   @Column()
   @Length(2, 50)
-  @Matches(/^([^0-9]*)$/, { message: "Votre nom ne peut pas contenir de chiffres" })
+  @Matches(/^([^0-9]*)$/, {
+    message: "Votre nom ne peut pas contenir de chiffres",
+  })
   firstname!: string;
 
   @Field()
   @Column()
   @Length(2, 50)
-  @Matches(/^([^0-9]*)$/, { message: "Votre nom ne peut pas contenir de chiffres" })
+  @Matches(/^([^0-9]*)$/, {
+    message: "Votre nom ne peut pas contenir de chiffres",
+  })
   lastname!: string;
 }
 @InputType()

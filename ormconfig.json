@@ -1,6 +1,10 @@
 {
-    "type": "sqlite",
-    "database": "database.sqlite",
+    "type": "mysql",
+    "host": "db",
+    "port": 3306,
+    "username": "root",
+    "password": "easyPass",
+    "database": "easyTest",
     "synchronize": true,
     "logging": true,
     "entities": [

@@ -1,3 +1,4 @@
+version: "3"
 services:
   server:
     build:
@@ -7,3 +8,20 @@ services:
       - 4000:4000
     volumes:
       - ./src:/app/src/
+      - ./ormconfig.json:/app/ormconfig.json
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: easyPass
+      MYSQL_DATABASE: easyTest
+    volumes:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 20s
+      retries: 10
