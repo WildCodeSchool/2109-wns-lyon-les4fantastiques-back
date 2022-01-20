@@ -26,4 +26,4 @@ jobs:
         with:
           context: ./server
           push: true
-          tags: rangodisco/easyTicketBack:latest
+          tags: rangodisco/easyticketback:latest
