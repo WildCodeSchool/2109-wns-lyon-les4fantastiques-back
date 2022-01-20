@@ -5,7 +5,7 @@ COPY ./package.json ./
 RUN npm i
 
 COPY src src
-COPY .env .env
+COPY .env.dev .env
 COPY tsconfig.json tsconfig.json
 COPY ormconfig.json ormconfig.json
 
