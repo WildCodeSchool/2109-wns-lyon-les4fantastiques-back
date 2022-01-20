@@ -16,8 +16,8 @@ services:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_PASSWORD: ${PROD_DB_PASS}
-      MYSQL_DATABASE: ${PROD_DB}
+      MYSQL_ROOT_PASSWORD: easyPass
+      MYSQL_DATABASE: easyTicket
     volumes:
       - easyTicketDb:/var/lib/mysql
     healthcheck:
