@@ -1,13 +1,13 @@
-import { Arg, Authorized, Ctx, Field, ID, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
 import { User, UserInputSignIn, UserInputSignUp } from "../models/User";
 import * as argon2 from "argon2";
 import { generateToken } from "../helpers/auth/token";
-import { ERole } from "../types";
 
 @Resolver(User)
 export class UsersResolver {
   private userRepo = getRepository(User);
+
   // QUERIES
 
   // Get de tous les users
@@ -22,7 +22,7 @@ export class UsersResolver {
   @Query(() => User)
   async getSignedInUser(@Ctx() context: { user: User }): Promise<User> {
     const user = context.user;
-    return await this.userRepo.findOne(user.id, { relations: [ "projectsCreated" ]}); // empêche de faire des appels à la bdd pour rien
+    return await this.userRepo.findOne(user.id, { relations: ["userProject"] }); // empêche de faire des appels à la bdd pour rien
   }
 
   // MUTATIONS
