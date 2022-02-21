@@ -1,24 +1,9 @@
 import { IsEmail, Length, Matches } from "class-validator";
-import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from "type-graphql";
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  RelationId,
-} from "typeorm";
-import { ERole } from "../types";
-import { Project } from "./Project";
+import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ERole } from "../types/ERolesEnum";
+import { UserProject } from "./UserProject";
+import { UserTicket } from "./UserTicket";
 
 // Nécessaire pour utiliser l'enum
 registerEnumType(ERole, {
@@ -61,9 +46,13 @@ export class User extends BaseEntity {
   @Column()
   role: ERole = ERole.DEV;
 
-  @Field(() => [Project])
-  @OneToMany(() => Project, (project) => project.userAuthor, { lazy: true })
-  projectsCreated: Promise<Project[]>;
+  @Field(() => [UserProject])
+  @OneToMany(() => UserProject, (userProject) => userProject.user, { lazy: true })
+  userProject!: Promise<UserProject[]>;
+
+  @Field(() => [UserTicket])
+  @OneToMany(() => UserTicket, (userTicket) => userTicket.user, { lazy: true })
+  userTicket!: Promise<UserTicket[]>;
 }
 
 @InputType()
@@ -73,13 +62,9 @@ export class UserInputSignUp {
   email!: string;
 
   @Field()
-  @Matches(
-    /^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/,
-    {
-      message:
-        "Votre mot de passe doit contenir au moins 8 caractères, une miniscule, une majuscule, un chiffre aisni qu'un caractère spécial",
-    }
-  )
+  @Matches(/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/, {
+    message: "Votre mot de passe doit contenir au moins 8 caractères, une miniscule, une majuscule, un chiffre aisni qu'un caractère spécial",
+  })
   password!: string;
 
   @Field()
