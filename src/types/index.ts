@@ -5,12 +5,6 @@ export type ContextType = {
   user: User | null;
 };
 
-export enum ERole {
-  ADMIN = "ADMIN",
-  PO = "PO",
-  DEV = "DEV",
-}
-
 export enum ECategory {
   BUG = "BUG",
   FEATURE = "FEATURE",
