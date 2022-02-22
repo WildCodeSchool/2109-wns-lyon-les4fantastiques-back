@@ -12,14 +12,14 @@ export class UserProjectsResolver {
   @Mutation(() => UserProject)
   async updateUserProject(
     @Arg("userProjectId") userProjectId: number,
-    @Arg("data", () => UpdateUserProjectInput) updateUserProject: UpdateUserProjectInput,
+    @Arg("data", () => UpdateUserProjectInput) updateUserProjectInput: UpdateUserProjectInput,
     @Ctx() context: { user: User }
   ): Promise<UserProject> {
     const currentUser = await this.userRepo.findOne(context.user.id);
     const userProjectToUpdate = await this.userProjectRepo.findOne(userProjectId);
 
     if (isAuthorized(currentUser.role, userProjectToUpdate.role)) {
-      Object.assign(userProjectToUpdate, updateUserProject);
+      Object.assign(userProjectToUpdate, updateUserProjectInput);
       await userProjectToUpdate.save();
       return userProjectToUpdate;
     }

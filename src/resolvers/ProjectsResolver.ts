@@ -1,9 +1,9 @@
 import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
 import isAuthorized from "../helpers/auth/isAuthorized";
-import { Project, ProjectInputCreation } from "../models/Project";
+import { Project, ProjectInput } from "../models/Project";
 import { User } from "../models/User";
-import { addUserToProject, UserProject } from "../models/UserProject";
+import { AddUserToProjectInput, UserProject } from "../models/UserProject";
 import { ERoleUserProject } from "../types/ERolesEnum";
 
 @Resolver(Project)
@@ -29,12 +29,11 @@ export class ProjectsResolver {
 
   //MUTATIONS
 
-  //crée un projet
   @Authorized(["PO", "ADMIN"])
   @Mutation(() => Project)
-  async createProject(@Arg("data", () => ProjectInputCreation) project: ProjectInputCreation, @Ctx() context: { user: User }): Promise<Project> {
+  async createProject(@Arg("data", () => ProjectInput) projectInput: ProjectInput, @Ctx() context: { user: User }): Promise<Project> {
     const user = await this.userRepo.findOne(context.user.id);
-    const newProject = this.projectRepo.create({ ...project });
+    const newProject = this.projectRepo.create({ ...projectInput });
     newProject.creationDate = new Date();
     await newProject.save();
 
@@ -45,24 +44,26 @@ export class ProjectsResolver {
     return newProject;
   }
 
-  // Ajouter un utilisateur au projet
   @Authorized()
   @Mutation(() => Project)
-  async addUserToProject(@Arg("data", () => addUserToProject) addUser: addUserToProject, @Ctx() context: { user: User }): Promise<Project> {
+  async addUserToProject(
+    @Arg("data", () => AddUserToProjectInput) addUserToProjectInput: AddUserToProjectInput,
+    @Ctx() context: { user: User }
+  ): Promise<Project> {
     const currentUser = await this.userRepo.findOne(context.user.id);
     const currentUserProject = await this.userProjectRepo.findOne({
       where: {
         user: currentUser.id,
-        project: addUser.projectId,
+        project: addUserToProjectInput.projectId,
       },
     });
 
     if (isAuthorized(currentUser.role, currentUserProject.role)) {
-      const projectToUpdate = await this.projectRepo.findOne(addUser.projectId);
+      const projectToUpdate = await this.projectRepo.findOne(addUserToProjectInput.projectId);
       const newUserProject = this.userProjectRepo.create({
         user: currentUser,
         project: projectToUpdate,
-        role: addUser.role,
+        role: addUserToProjectInput.role,
       });
 
       newUserProject.save();

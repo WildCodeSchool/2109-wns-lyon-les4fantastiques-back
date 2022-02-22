@@ -29,8 +29,8 @@ export class UsersResolver {
 
   // Inscription
   @Mutation(() => User)
-  async signup(@Arg("data", () => UserInputSignUp) user: UserInputSignUp): Promise<User> {
-    const newUser = this.userRepo.create(user);
+  async signup(@Arg("data", () => UserInputSignUp) userInputSignUp: UserInputSignUp): Promise<User> {
+    const newUser = this.userRepo.create(userInputSignUp);
     newUser.password = await argon2.hash(newUser.password);
     await newUser.save();
     return newUser;
@@ -38,10 +38,10 @@ export class UsersResolver {
 
   // Connexion
   @Mutation(() => String, { nullable: true })
-  async signin(@Arg("data", () => UserInputSignIn) user: UserInputSignIn): Promise<string> {
-    const userToSignIn = await this.userRepo.findOne({ email: user.email });
+  async signin(@Arg("data", () => UserInputSignIn) userInputSignIn: UserInputSignIn): Promise<string> {
+    const userToSignIn = await this.userRepo.findOne({ email: userInputSignIn.email });
     if (userToSignIn) {
-      if (await argon2.verify(userToSignIn.password, user.password)) {
+      if (await argon2.verify(userToSignIn.password, userInputSignIn.password)) {
         const token = generateToken(userToSignIn.id);
         return token && token;
       } else {

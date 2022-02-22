@@ -1,6 +1,8 @@
 import { Length } from "class-validator";
 import { Field, ID, InputType, Int, ObjectType } from "type-graphql";
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Lazy } from "../types/Lazy";
+import { Comment } from "./Comment";
 import { Project } from "./Project";
 import { UserTicket } from "./UserTicket";
 
@@ -45,7 +47,11 @@ export class Ticket extends BaseEntity {
 
   @Field(() => [UserTicket])
   @OneToMany(() => UserTicket, (userTicket) => userTicket.ticket, { lazy: true })
-  userTicket!: Promise<UserTicket[]>;
+  userTicket!: Lazy<UserTicket[]>;
+
+  @Field(() => [Comment])
+  @OneToMany(() => Comment, (comment) => comment.ticket)
+  comments: Comment;
 }
 
 @InputType()

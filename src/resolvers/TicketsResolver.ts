@@ -22,7 +22,7 @@ export class TicketsResolver {
   @Query(() => Ticket)
   async getTicket(@Arg("id", () => ID) ticketId: number, @Ctx() context: { user: User }): Promise<Ticket> {
     const currentUser = await this.userRepo.findOne(context.user.id);
-    const ticket = await this.ticketRepo.findOne(ticketId, { relations: ["project", "userTicket"] });
+    const ticket = await this.ticketRepo.findOne(ticketId, { relations: ["project", "userTicket", "comments"] });
     const userProject = await this.userProjectRepo.findOne({
       where: {
         project: ticket.project,
