@@ -1,5 +1,11 @@
 import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Lazy } from "../types/Lazy";
 import { ERoleUserTicket } from "../types/ERolesEnum";
 import { Ticket } from "./Ticket";

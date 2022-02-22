@@ -17,7 +17,13 @@ async function bootstrap() {
 
   // ... Building schema here
   const schema = await buildSchema({
-    resolvers: [UsersResolver, ProjectsResolver, UserProjectsResolver, TicketsResolver, CommentsResolver],
+    resolvers: [
+      UsersResolver,
+      ProjectsResolver,
+      UserProjectsResolver,
+      TicketsResolver,
+      CommentsResolver,
+    ],
     authChecker: customAuthChecker,
   });
 

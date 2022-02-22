@@ -1,4 +1,12 @@
-import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  ID,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { getRepository } from "typeorm";
 import { User, UserInputSignIn, UserInputSignUp } from "../models/User";
 import * as argon2 from "argon2";
@@ -29,7 +37,9 @@ export class UsersResolver {
 
   // Inscription
   @Mutation(() => User)
-  async signup(@Arg("data", () => UserInputSignUp) userInputSignUp: UserInputSignUp): Promise<User> {
+  async signup(
+    @Arg("data", () => UserInputSignUp) userInputSignUp: UserInputSignUp,
+  ): Promise<User> {
     const newUser = this.userRepo.create(userInputSignUp);
     newUser.password = await argon2.hash(newUser.password);
     await newUser.save();
@@ -38,10 +48,16 @@ export class UsersResolver {
 
   // Connexion
   @Mutation(() => String, { nullable: true })
-  async signin(@Arg("data", () => UserInputSignIn) userInputSignIn: UserInputSignIn): Promise<string> {
-    const userToSignIn = await this.userRepo.findOne({ email: userInputSignIn.email });
+  async signin(
+    @Arg("data", () => UserInputSignIn) userInputSignIn: UserInputSignIn,
+  ): Promise<string> {
+    const userToSignIn = await this.userRepo.findOne({
+      email: userInputSignIn.email,
+    });
     if (userToSignIn) {
-      if (await argon2.verify(userToSignIn.password, userInputSignIn.password)) {
+      if (
+        await argon2.verify(userToSignIn.password, userInputSignIn.password)
+      ) {
         const token = generateToken(userToSignIn.id);
         return token && token;
       } else {

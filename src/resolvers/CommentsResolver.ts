@@ -17,10 +17,16 @@ export class CommentsResolver {
   // MUTATIONS
   @Authorized()
   @Mutation(() => Comment)
-  async createComment(@Arg("data", () => CommentInput) commentInput: CommentInput, @Ctx() context: { user: User }): Promise<Comment> {
+  async createComment(
+    @Arg("data", () => CommentInput) commentInput: CommentInput,
+    @Ctx() context: { user: User },
+  ): Promise<Comment> {
     const currentUser = await this.userRepo.findOne(context.user.id);
     const currentTicket = await this.ticketRepo.findOne(commentInput.ticketId);
-    const userTicket = await this.userTicketRepo.findOne({ ticket: currentTicket, user: currentUser });
+    const userTicket = await this.userTicketRepo.findOne({
+      ticket: currentTicket,
+      user: currentUser,
+    });
 
     if (userTicket) {
       const newComment = this.commentRepo.create({
@@ -38,11 +44,14 @@ export class CommentsResolver {
   @Authorized()
   @Mutation(() => Comment)
   async updateComment(
-    @Arg("data", () => UpdateCommentInput) updateCommentInput: UpdateCommentInput,
-    @Ctx() context: { user: User }
+    @Arg("data", () => UpdateCommentInput)
+    updateCommentInput: UpdateCommentInput,
+    @Ctx() context: { user: User },
   ): Promise<Comment> {
     const currentUser = await this.userRepo.findOne(context.user.id);
-    const commentToUpdate = await this.commentRepo.findOne(updateCommentInput.commentId);
+    const commentToUpdate = await this.commentRepo.findOne(
+      updateCommentInput.commentId,
+    );
 
     if (commentToUpdate.author === currentUser) {
       commentToUpdate.content = updateCommentInput.content;
@@ -55,7 +64,10 @@ export class CommentsResolver {
 
   @Authorized()
   @Mutation(() => Comment)
-  async deletComment(@Arg("commentId", () => ID) commentId: number, @Ctx() context: { user: User }): Promise<Comment> {
+  async deletComment(
+    @Arg("commentId", () => ID) commentId: number,
+    @Ctx() context: { user: User },
+  ): Promise<Comment> {
     const currentUser = await this.userRepo.findOne(context.user.id);
     const commentToRemove = await this.commentRepo.findOne(commentId);
     if (commentToRemove.author === currentUser) {
