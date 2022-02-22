@@ -23,6 +23,7 @@ import { ERoleUserTicket } from "../types/ERolesEnum";
 import { Upload } from "../types/Upload";
 import { GraphQLUpload } from "graphql-upload";
 import { Picture } from "../models/Picture";
+import { v4 as uuidv4 } from "uuid";
 
 @Resolver(Ticket)
 export class TicketsResolver {
@@ -41,14 +42,13 @@ export class TicketsResolver {
     @Arg("id", () => ID) ticketId: number,
     @Ctx() context: { user: User },
   ): Promise<Ticket> {
-    const currentUser = await this.userRepo.findOne(context.user.id);
     const ticket = await this.ticketRepo.findOne(ticketId, {
       relations: ["project", "userTicket", "comments"],
     });
     const userProject = await this.userProjectRepo.findOne({
       where: {
         project: ticket.project,
-        user: currentUser,
+        user: context.user,
       },
     });
 
@@ -68,11 +68,10 @@ export class TicketsResolver {
     @Arg("data", () => TicketInputCreation) ticket: TicketInputCreation,
     @Ctx() context: { user: User },
   ): Promise<Ticket | ForbiddenError> {
-    const currentUser = await this.userRepo.findOne(context.user.id);
     const project = await this.projectRepo.findOne(ticket.projectId);
     const currentUserProject = await this.userProjectRepo.findOne({
       where: {
-        user: currentUser,
+        user: context.user,
         project: project,
       },
     });
@@ -87,7 +86,7 @@ export class TicketsResolver {
       newTicket.creationDate = new Date();
       await newTicket.save();
       const newUserTicket = this.userTicketRepo.create({
-        user: currentUser,
+        user: context.user,
         ticket: newTicket,
       });
       newUserTicket.save();
@@ -104,7 +103,6 @@ export class TicketsResolver {
     @Arg("data", () => UpdateTicketInput) UpdateTicketInput: UpdateTicketInput,
     @Ctx() context: { user: User },
   ): Promise<Ticket | void> {
-    const currentUser = await this.userRepo.findOne(context.user.id);
     const ticketToUpdate = await this.ticketRepo.findOne(
       UpdateTicketInput.ticketId,
     );
@@ -112,7 +110,7 @@ export class TicketsResolver {
     const userTicketToUpdate = await this.userTicketRepo.find({
       where: {
         ticket: ticketToUpdate,
-        user: currentUser,
+        user: context.user,
       },
     });
 
@@ -156,23 +154,36 @@ export class TicketsResolver {
   }
 
   @Authorized()
-  @Mutation(() => Boolean)
+  @Mutation(() => String)
   async addPictureToTicket(
     @Arg("ticketId", () => ID)
     ticketId: number,
     @Arg("picture", () => GraphQLUpload)
     { createReadStream, filename }: Upload,
-  ): Promise<string | any> {
+    @Ctx() context: { user: User },
+  ): Promise<string> {
     const ticketToUpdate = await this.ticketRepo.findOne(ticketId);
-    await createReadStream().pipe(
-      createWriteStream(__dirname + `/../uploads/${filename}`),
-    );
-
-    const newPicture = this.pictureRepo.create({
-      ticket: ticketToUpdate,
-      contentUrl: `http://localhost:4000/${filename}`,
+    const userTicket = await this.userTicketRepo.findOne({
+      where: {
+        ticket: ticketToUpdate,
+        user: context.user,
+      },
     });
-    newPicture.save();
-    return newPicture.contentUrl;
+
+    if (userTicket) {
+      const newFilename = uuidv4();
+      await createReadStream().pipe(
+        createWriteStream(__dirname + `/../uploads/${newFilename}-${filename}`),
+      );
+
+      const newPicture = this.pictureRepo.create({
+        ticket: ticketToUpdate,
+        contentUrl: `${newFilename}-${filename}`,
+      });
+      newPicture.save();
+      return newPicture.contentUrl;
+    }
+
+    return null;
   }
 }

@@ -21,17 +21,16 @@ export class CommentsResolver {
     @Arg("data", () => CommentInput) commentInput: CommentInput,
     @Ctx() context: { user: User },
   ): Promise<Comment> {
-    const currentUser = await this.userRepo.findOne(context.user.id);
     const currentTicket = await this.ticketRepo.findOne(commentInput.ticketId);
     const userTicket = await this.userTicketRepo.findOne({
       ticket: currentTicket,
-      user: currentUser,
+      user: context.user,
     });
 
     if (userTicket) {
       const newComment = this.commentRepo.create({
         ticket: currentTicket,
-        author: currentUser,
+        author: context.user,
         content: commentInput.content,
       });
       newComment.save();
@@ -48,12 +47,11 @@ export class CommentsResolver {
     updateCommentInput: UpdateCommentInput,
     @Ctx() context: { user: User },
   ): Promise<Comment> {
-    const currentUser = await this.userRepo.findOne(context.user.id);
     const commentToUpdate = await this.commentRepo.findOne(
       updateCommentInput.commentId,
     );
 
-    if (commentToUpdate.author === currentUser) {
+    if (commentToUpdate.author === context.user) {
       commentToUpdate.content = updateCommentInput.content;
       commentToUpdate.save();
       return commentToUpdate;
@@ -68,9 +66,8 @@ export class CommentsResolver {
     @Arg("commentId", () => ID) commentId: number,
     @Ctx() context: { user: User },
   ): Promise<Comment> {
-    const currentUser = await this.userRepo.findOne(context.user.id);
     const commentToRemove = await this.commentRepo.findOne(commentId);
-    if (commentToRemove.author === currentUser) {
+    if (commentToRemove.author === context.user) {
       await commentToRemove.remove();
       return commentToRemove;
     }

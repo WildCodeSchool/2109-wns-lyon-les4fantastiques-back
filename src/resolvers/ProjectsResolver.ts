@@ -47,18 +47,16 @@ export class ProjectsResolver {
     @Arg("data", () => ProjectInput) projectInput: ProjectInput,
     @Ctx() context: { user: User },
   ): Promise<Project> {
-    const user = await this.userRepo.findOne(context.user.id);
     const newProject = this.projectRepo.create({ ...projectInput });
     newProject.creationDate = new Date();
     await newProject.save();
 
     const newUserProject = this.userProjectRepo.create({
-      user: user,
+      user: context.user,
       project: newProject,
       role: ERoleUserProject.AUTHOR,
     });
     newUserProject.save();
-    (await newProject.userProject).push(newUserProject);
     newProject.save();
     return newProject;
   }
@@ -70,26 +68,24 @@ export class ProjectsResolver {
     addUserToProjectInput: AddUserToProjectInput,
     @Ctx() context: { user: User },
   ): Promise<Project> {
-    const currentUser = await this.userRepo.findOne(context.user.id);
     const currentUserProject = await this.userProjectRepo.findOne({
       where: {
-        user: currentUser.id,
+        user: context.user,
         project: addUserToProjectInput.projectId,
       },
     });
 
-    if (isAuthorized(currentUser.role, currentUserProject.role)) {
+    if (isAuthorized(context.user.role, currentUserProject.role)) {
       const projectToUpdate = await this.projectRepo.findOne(
         addUserToProjectInput.projectId,
       );
       const newUserProject = this.userProjectRepo.create({
-        user: currentUser,
+        user: context.user,
         project: projectToUpdate,
         role: addUserToProjectInput.role,
       });
 
       newUserProject.save();
-      (await projectToUpdate.userProject).push(newUserProject);
       projectToUpdate.save();
 
       return projectToUpdate;
