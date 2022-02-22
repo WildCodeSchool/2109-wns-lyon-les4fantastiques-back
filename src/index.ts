@@ -7,6 +7,7 @@ import { customAuthChecker } from "./helpers/auth/customAuthChecker";
 import { ProjectsResolver } from "./resolvers/ProjectsResolver";
 import { UserProjectsResolver } from "./resolvers/UserProjectResolver";
 import { TicketsResolver } from "./resolvers/TicketsResolver";
+import { CommentsResolver } from "./resolvers/CommentsResolver";
 
 const PORT = process.env.PORT || 4000;
 
@@ -16,7 +17,7 @@ async function bootstrap() {
 
   // ... Building schema here
   const schema = await buildSchema({
-    resolvers: [UsersResolver, ProjectsResolver, UserProjectsResolver, TicketsResolver],
+    resolvers: [UsersResolver, ProjectsResolver, UserProjectsResolver, TicketsResolver, CommentsResolver],
     authChecker: customAuthChecker,
   });
 
