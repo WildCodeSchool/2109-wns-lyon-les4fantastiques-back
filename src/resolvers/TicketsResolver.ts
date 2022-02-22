@@ -1,8 +1,20 @@
 import { ForbiddenError } from "apollo-server";
-import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  ID,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { getRepository } from "typeorm";
 import { Project } from "../models/Project";
-import { Ticket, TicketInputCreation, UpdateTicketInput } from "../models/Ticket";
+import {
+  Ticket,
+  TicketInputCreation,
+  UpdateTicketInput,
+} from "../models/Ticket";
 import { User } from "../models/User";
 import { UserProject } from "../models/UserProject";
 import { UserTicket } from "../models/UserTicket";
@@ -20,9 +32,14 @@ export class TicketsResolver {
 
   @Authorized()
   @Query(() => Ticket)
-  async getTicket(@Arg("id", () => ID) ticketId: number, @Ctx() context: { user: User }): Promise<Ticket> {
+  async getTicket(
+    @Arg("id", () => ID) ticketId: number,
+    @Ctx() context: { user: User },
+  ): Promise<Ticket> {
     const currentUser = await this.userRepo.findOne(context.user.id);
-    const ticket = await this.ticketRepo.findOne(ticketId, { relations: ["project", "userTicket", "comments"] });
+    const ticket = await this.ticketRepo.findOne(ticketId, {
+      relations: ["project", "userTicket", "comments"],
+    });
     const userProject = await this.userProjectRepo.findOne({
       where: {
         project: ticket.project,
@@ -44,7 +61,7 @@ export class TicketsResolver {
   @Mutation(() => Ticket)
   async createTicket(
     @Arg("data", () => TicketInputCreation) ticket: TicketInputCreation,
-    @Ctx() context: { user: User }
+    @Ctx() context: { user: User },
   ): Promise<Ticket | ForbiddenError> {
     const currentUser = await this.userRepo.findOne(context.user.id);
     const project = await this.projectRepo.findOne(ticket.projectId);
@@ -80,10 +97,12 @@ export class TicketsResolver {
   @Mutation(() => Ticket)
   async updateTicket(
     @Arg("data", () => UpdateTicketInput) UpdateTicketInput: UpdateTicketInput,
-    @Ctx() context: { user: User }
+    @Ctx() context: { user: User },
   ): Promise<Ticket | void> {
     const currentUser = await this.userRepo.findOne(context.user.id);
-    const ticketToUpdate = await this.ticketRepo.findOne(UpdateTicketInput.ticketId);
+    const ticketToUpdate = await this.ticketRepo.findOne(
+      UpdateTicketInput.ticketId,
+    );
     // const project = await this.projectRepo.findOne(ticket.project);
     const userTicketToUpdate = await this.userTicketRepo.find({
       where: {
@@ -100,7 +119,9 @@ export class TicketsResolver {
         ticketToUpdate.timeEstimation = UpdateTicketInput.timeEstimation;
       }
       if (UpdateTicketInput.userAssignedId) {
-        const userToAssign = await this.userRepo.findOne(UpdateTicketInput.userAssignedId);
+        const userToAssign = await this.userRepo.findOne(
+          UpdateTicketInput.userAssignedId,
+        );
         const userTicketToUpdate = await this.userTicketRepo.findOne({
           where: {
             ticket: ticketToUpdate,

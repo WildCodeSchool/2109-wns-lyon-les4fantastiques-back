@@ -1,5 +1,18 @@
-import { Field, ID, InputType, Int, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import {
+  Field,
+  ID,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from "type-graphql";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Lazy } from "../types/Lazy";
 import { ERoleUserProject } from "../types/ERolesEnum";
 import { Ticket } from "./Ticket";
@@ -31,16 +44,18 @@ export class Project extends BaseEntity {
   @Column()
   timeEstimation!: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { defaultValue: 0 })
   @Column()
-  timeSpent: number = 0;
+  timeSpent!: number;
 
   @Field()
   @Column()
   isClosed!: boolean;
 
   @Field(() => [UserProject], { defaultValue: [] })
-  @OneToMany(() => UserProject, (userProject) => userProject.project, { lazy: true })
+  @OneToMany(() => UserProject, (userProject) => userProject.project, {
+    lazy: true,
+  })
   userProject!: Lazy<UserProject[]>;
 
   @Field(() => [Ticket])

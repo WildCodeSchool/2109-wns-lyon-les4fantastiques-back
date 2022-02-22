@@ -1,6 +1,18 @@
 import { IsEmail, Length, Matches } from "class-validator";
-import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from "type-graphql";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Lazy } from "../types/Lazy";
 import { ERole } from "../types/ERolesEnum";
 import { Comment } from "./Comment";
@@ -49,7 +61,9 @@ export class User extends BaseEntity {
   role: ERole = ERole.DEV;
 
   @Field(() => [UserProject])
-  @OneToMany(() => UserProject, (userProject) => userProject.user, { lazy: true })
+  @OneToMany(() => UserProject, (userProject) => userProject.user, {
+    lazy: true,
+  })
   userProject!: Lazy<UserProject[]>;
 
   @Field(() => [UserTicket])
@@ -68,9 +82,13 @@ export class UserInputSignUp {
   email!: string;
 
   @Field()
-  @Matches(/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/, {
-    message: "Votre mot de passe doit contenir au moins 8 caractères, une miniscule, une majuscule, un chiffre aisni qu'un caractère spécial",
-  })
+  @Matches(
+    /^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/,
+    {
+      message:
+        "Votre mot de passe doit contenir au moins 8 caractères, une miniscule, une majuscule, un chiffre aisni qu'un caractère spécial",
+    },
+  )
   password!: string;
 
   @Field()

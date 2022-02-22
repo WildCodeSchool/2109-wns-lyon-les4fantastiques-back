@@ -1,4 +1,4 @@
-name: test-jest
+name: push-procedure
 
 on:
   push:
@@ -6,12 +6,14 @@ on:
       - "*"
 
 jobs:
-  test-server:
+  push-procedure:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install dependencies
         run: npm i
+      - name: Check lint
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx
       - name: Run tests
         run: npm run test
