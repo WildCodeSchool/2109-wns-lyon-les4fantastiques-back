@@ -1,7 +1,9 @@
 import { IsEmail, Length, Matches } from "class-validator";
 import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Lazy } from "../types/Lazy";
 import { ERole } from "../types/ERolesEnum";
+import { Comment } from "./Comment";
 import { UserProject } from "./UserProject";
 import { UserTicket } from "./UserTicket";
 
@@ -48,11 +50,15 @@ export class User extends BaseEntity {
 
   @Field(() => [UserProject])
   @OneToMany(() => UserProject, (userProject) => userProject.user, { lazy: true })
-  userProject!: Promise<UserProject[]>;
+  userProject!: Lazy<UserProject[]>;
 
   @Field(() => [UserTicket])
   @OneToMany(() => UserTicket, (userTicket) => userTicket.user, { lazy: true })
-  userTicket!: Promise<UserTicket[]>;
+  userTicket!: Lazy<UserTicket[]>;
+
+  @Field(() => [Comment])
+  @OneToMany(() => Comment, (comment) => comment.author, { lazy: true })
+  comments: Lazy<Comment[]>;
 }
 
 @InputType()

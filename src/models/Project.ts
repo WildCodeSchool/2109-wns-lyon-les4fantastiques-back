@@ -1,5 +1,6 @@
 import { Field, ID, InputType, Int, ObjectType, registerEnumType } from "type-graphql";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import { Lazy } from "../types/Lazy";
 import { ERoleUserProject } from "../types/ERolesEnum";
 import { Ticket } from "./Ticket";
 import { UserProject } from "./UserProject";
@@ -40,15 +41,15 @@ export class Project extends BaseEntity {
 
   @Field(() => [UserProject], { defaultValue: [] })
   @OneToMany(() => UserProject, (userProject) => userProject.project, { lazy: true })
-  userProject!: Promise<UserProject[]>;
+  userProject!: Lazy<UserProject[]>;
 
   @Field(() => [Ticket])
   @OneToMany(() => Ticket, (ticket) => ticket.project, { lazy: true })
-  tickets: Promise<Ticket[]>;
+  tickets: Lazy<Ticket[]>;
 }
 
 @InputType()
-export class ProjectInputCreation {
+export class ProjectInput {
   @Field()
   name!: string;
 
@@ -60,7 +61,7 @@ export class ProjectInputCreation {
 }
 
 @InputType()
-export class updateProject {
+export class UpdateProjectInput {
   @Field()
   projectId: number;
 
