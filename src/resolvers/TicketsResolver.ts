@@ -1,4 +1,5 @@
 import { ForbiddenError } from "apollo-server";
+import { createWriteStream } from "graceful-fs";
 import {
   Arg,
   Authorized,
@@ -19,6 +20,9 @@ import { User } from "../models/User";
 import { UserProject } from "../models/UserProject";
 import { UserTicket } from "../models/UserTicket";
 import { ERoleUserTicket } from "../types/ERolesEnum";
+import { Upload } from "../types/Upload";
+import { GraphQLUpload } from "graphql-upload";
+import { Picture } from "../models/Picture";
 
 @Resolver(Ticket)
 export class TicketsResolver {
@@ -27,6 +31,7 @@ export class TicketsResolver {
   private projectRepo = getRepository(Project);
   private userProjectRepo = getRepository(UserProject);
   private userTicketRepo = getRepository(UserTicket);
+  private pictureRepo = getRepository(Picture);
 
   // QUERIES
 
@@ -148,5 +153,26 @@ export class TicketsResolver {
       ticketToUpdate.save();
       return ticketToUpdate;
     }
+  }
+
+  @Authorized()
+  @Mutation(() => Boolean)
+  async addPictureToTicket(
+    @Arg("ticketId", () => ID)
+    ticketId: number,
+    @Arg("picture", () => GraphQLUpload)
+    { createReadStream, filename }: Upload,
+  ): Promise<string | any> {
+    const ticketToUpdate = await this.ticketRepo.findOne(ticketId);
+    await createReadStream().pipe(
+      createWriteStream(__dirname + `/../uploads/${filename}`),
+    );
+
+    const newPicture = this.pictureRepo.create({
+      ticket: ticketToUpdate,
+      contentUrl: `http://localhost:4000/${filename}`,
+    });
+    newPicture.save();
+    return newPicture.contentUrl;
   }
 }

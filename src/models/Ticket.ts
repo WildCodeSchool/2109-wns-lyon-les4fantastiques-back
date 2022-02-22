@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Lazy } from "../types/Lazy";
 import { Comment } from "./Comment";
+import { Picture } from "./Picture";
 import { Project } from "./Project";
 import { UserTicket } from "./UserTicket";
 
@@ -61,6 +62,10 @@ export class Ticket extends BaseEntity {
   @Field(() => [Comment])
   @OneToMany(() => Comment, (comment) => comment.ticket)
   comments: Comment;
+
+  @Field(() => [Picture])
+  @OneToMany(() => Picture, (picture) => picture.ticket, { lazy: true })
+  pictures: Lazy<Picture[]>;
 }
 
 @InputType()
@@ -93,3 +98,9 @@ export class UpdateTicketInput {
   @Field({ nullable: true })
   userAssignedId?: number;
 }
+
+// @InputType()
+// export class AddPictureInput {
+//   @Field(() => GraphqlUpload)
+//   picture: GraphqlUpload;
+// }
