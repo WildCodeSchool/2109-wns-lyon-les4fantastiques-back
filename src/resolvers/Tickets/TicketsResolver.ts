@@ -10,20 +10,22 @@ import {
   Resolver,
 } from "type-graphql";
 import { getRepository } from "typeorm";
-import { Project } from "../models/Project";
+import { Project } from "../../models/Project";
 import {
   Ticket,
+  TicketFiltersInput,
   TicketInputCreation,
   UpdateTicketInput,
-} from "../models/Ticket";
-import { User } from "../models/User";
-import { UserProject } from "../models/UserProject";
-import { UserTicket } from "../models/UserTicket";
-import { ERoleUserTicket } from "../types/ERolesEnum";
-import { Upload } from "../types/Upload";
+} from "../../models/Ticket";
+import { User } from "../../models/User";
+import { UserProject } from "../../models/UserProject";
+import { UserTicket } from "../../models/UserTicket";
+import { ERoleUserTicket } from "../../types/Enums/ERolesTicket";
+import { Upload } from "../../types/Upload";
 import { GraphQLUpload } from "graphql-upload";
-import { Picture } from "../models/Picture";
+import { Picture } from "../../models/Picture";
 import { v4 as uuidv4 } from "uuid";
+import { addFilters } from "./Filters/TicketsFilters";
 
 @Resolver(Ticket)
 export class TicketsResolver {
@@ -35,6 +37,31 @@ export class TicketsResolver {
   private pictureRepo = getRepository(Picture);
 
   // QUERIES
+  @Authorized()
+  @Query(() => [Ticket])
+  async getTickets(
+    @Arg("data", () => TicketFiltersInput)
+    ticketFiltersInput: TicketFiltersInput,
+    @Ctx() context: { user: User },
+  ): Promise<Ticket[]> {
+    const userProject = this.userProjectRepo.findOne({
+      where: {
+        user: context.user,
+        project: ticketFiltersInput.projectId,
+      },
+    });
+
+    if (userProject) {
+      const qb = this.userRepo
+        .createQueryBuilder()
+        .select("ticket")
+        .from(Ticket, "ticket");
+
+      addFilters(ticketFiltersInput, qb);
+      const tickets = qb.getMany();
+      return tickets;
+    }
+  }
 
   @Authorized()
   @Query(() => Ticket)

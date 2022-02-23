@@ -6,7 +6,7 @@ import { createConnection } from "typeorm";
 import { customAuthChecker } from "./helpers/auth/customAuthChecker";
 import { ProjectsResolver } from "./resolvers/ProjectsResolver";
 import { UserProjectsResolver } from "./resolvers/UserProjectResolver";
-import { TicketsResolver } from "./resolvers/TicketsResolver";
+import { TicketsResolver } from "./resolvers/Tickets/TicketsResolver";
 import { CommentsResolver } from "./resolvers/CommentsResolver";
 import { graphqlUploadExpress } from "graphql-upload";
 import * as express from "express";

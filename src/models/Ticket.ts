@@ -50,8 +50,8 @@ export class Ticket extends BaseEntity {
   isActive!: boolean;
 
   @Field(() => Project)
-  @ManyToOne(() => Project, (project) => project.tickets)
-  project!: Project;
+  @ManyToOne(() => Project, (project) => project.tickets, { lazy: true })
+  project!: Lazy<Project>;
 
   @Field(() => [UserTicket])
   @OneToMany(() => UserTicket, (userTicket) => userTicket.ticket, {
@@ -99,8 +99,14 @@ export class UpdateTicketInput {
   userAssignedId?: number;
 }
 
-// @InputType()
-// export class AddPictureInput {
-//   @Field(() => GraphqlUpload)
-//   picture: GraphqlUpload;
-// }
+@InputType()
+export class TicketFiltersInput {
+  @Field({ nullable: true })
+  projectId?: number;
+
+  @Field({ nullable: true })
+  userAssignedId?: number;
+
+  @Field({ nullable: true })
+  authorId?: number;
+}
