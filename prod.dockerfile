@@ -3,13 +3,13 @@ FROM node:lts-alpine
 WORKDIR /app
 
 COPY ./package.json ./
-RUN npm i
+RUN yarn
 
 COPY src src
 COPY .env .env
 COPY tsconfig.json tsconfig.json
 COPY ormconfig.json ormconfig.json
 
-RUN npm run build
+RUN yarn run build
 
 CMD cd dist && node ./index.js

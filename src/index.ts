@@ -10,7 +10,6 @@ import { TicketsResolver } from "./resolvers/TicketsResolver";
 import { CommentsResolver } from "./resolvers/CommentsResolver";
 import { graphqlUploadExpress } from "graphql-upload";
 import * as express from "express";
-import { PicturesResolver } from "./resolvers/PicturesResolver";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import * as http from "http";
 import * as path from "path";
@@ -35,7 +34,6 @@ async function bootstrap() {
       UserProjectsResolver,
       TicketsResolver,
       CommentsResolver,
-      PicturesResolver,
     ],
     authChecker: customAuthChecker,
   });
