@@ -12,22 +12,31 @@ import isAuthorized from "../helpers/auth/isAuthorized";
 import { Project, ProjectInput } from "../models/Project";
 import { User } from "../models/User";
 import { AddUserToProjectInput, UserProject } from "../models/UserProject";
-import { ERoleUserProject } from "../types/ERolesEnum";
+import { ERole } from "../types/Enums/Erole";
+import { ERoleUserProject } from "../types/Enums/ERoleUserProject";
 
 @Resolver(Project)
 export class ProjectsResolver {
   private projectRepo = getRepository(Project);
-  private userRepo = getRepository(User);
   private userProjectRepo = getRepository(UserProject);
+  private userRepo = getRepository(User);
 
   // QUERIES
   // retourne tous les projets
-  @Authorized(["PO", "ADMIN"])
+  @Authorized()
   @Query(() => [Project])
-  async getProjects(): Promise<Project[]> {
-    return await this.projectRepo.find({
-      relations: ["userProject", "tickets"],
-    });
+  async getProjects(@Ctx() context: { user: User }): Promise<Project[]> {
+    const qb = this.projectRepo
+      .createQueryBuilder()
+      .select("project")
+      .from(Project, "project")
+      .innerJoinAndSelect("project.userProject", "userProject")
+      .where("project.isActive = :isActive", { isActive: true });
+    if (context.user.role !== ERole.ADMIN) {
+      qb.andWhere("userProject.user = :userId", { userId: context.user.id });
+    }
+    const projects = qb.getMany();
+    return projects;
   }
 
   // retourner un seul projet
@@ -79,8 +88,11 @@ export class ProjectsResolver {
       const projectToUpdate = await this.projectRepo.findOne(
         addUserToProjectInput.projectId,
       );
+      const userToAdd = await this.userRepo.findOne(
+        addUserToProjectInput.userId,
+      );
       const newUserProject = this.userProjectRepo.create({
-        user: context.user,
+        user: userToAdd,
         project: projectToUpdate,
         role: addUserToProjectInput.role,
       });

@@ -7,7 +7,8 @@
     "docker": "docker-compose -f docker-compose.dev.yml up --build",
     "start": "tsnd src/index.ts",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +38,7 @@
     "jest": "^27.4.7",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "prettier": "^2.5.1",
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^5.0.2",
     "ts-jest": "^27.1.3",

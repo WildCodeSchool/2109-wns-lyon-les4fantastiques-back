@@ -12,8 +12,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { ERoleUserProject } from "../types/Enums/ERoleUserProject";
 import { Lazy } from "../types/Lazy";
-import { ERoleUserProject } from "../types/ERolesEnum";
 import { Project } from "./Project";
 import { User } from "./User";
 
