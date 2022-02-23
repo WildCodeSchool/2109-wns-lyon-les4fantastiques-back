@@ -16,12 +16,11 @@ export class UserProjectsResolver {
     updateUserProjectInput: UpdateUserProjectInput,
     @Ctx() context: { user: User },
   ): Promise<UserProject> {
-    const currentUser = await this.userRepo.findOne(context.user.id);
     const userProjectToUpdate = await this.userProjectRepo.findOne(
       userProjectId,
     );
 
-    if (isAuthorized(currentUser.role, userProjectToUpdate.role)) {
+    if (isAuthorized(context.user.role, userProjectToUpdate.role)) {
       Object.assign(userProjectToUpdate, updateUserProjectInput);
       await userProjectToUpdate.save();
       return userProjectToUpdate;

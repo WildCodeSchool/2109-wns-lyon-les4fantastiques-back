@@ -45,12 +45,12 @@ export class Project extends BaseEntity {
   timeEstimation!: number;
 
   @Field(() => Int, { defaultValue: 0 })
-  @Column()
+  @Column({ default: 0 })
   timeSpent!: number;
 
   @Field()
-  @Column()
-  isClosed!: boolean;
+  @Column({ default: true })
+  isActive!: boolean;
 
   @Field(() => [UserProject], { defaultValue: [] })
   @OneToMany(() => UserProject, (userProject) => userProject.project, {
@@ -67,9 +67,6 @@ export class Project extends BaseEntity {
 export class ProjectInput {
   @Field()
   name!: string;
-
-  @Field()
-  isClosed!: boolean;
 
   @Field(() => Int)
   timeEstimation: number;
