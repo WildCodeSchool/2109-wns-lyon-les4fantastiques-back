@@ -1,4 +1,5 @@
-import { ERole, ERoleUserProject } from "../../types/ERolesEnum";
+import { ERole } from "../../types/Enums/Erole";
+import { ERoleUserProject } from "../../types/Enums/ERoleUserProject";
 
 const isAuthorized = (
   userRole: ERole,

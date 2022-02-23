@@ -13,8 +13,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { ERole } from "../types/Enums/Erole";
 import { Lazy } from "../types/Lazy";
-import { ERole } from "../types/ERolesEnum";
 import { Comment } from "./Comment";
 import { UserProject } from "./UserProject";
 import { UserTicket } from "./UserTicket";

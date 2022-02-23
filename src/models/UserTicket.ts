@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Lazy } from "../types/Lazy";
-import { ERoleUserTicket } from "../types/ERolesEnum";
+import { ERoleUserTicket } from "../types/Enums/ERolesTicket";
 import { Ticket } from "./Ticket";
 import { User } from "./User";
 
