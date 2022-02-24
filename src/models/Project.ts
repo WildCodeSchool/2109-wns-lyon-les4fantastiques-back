@@ -1,58 +1,88 @@
-import { Field, ID, InputType, Int, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from 'typeorm';
-import { User } from './User';
+import {
+  Field,
+  ID,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from "type-graphql";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { ERoleUserProject } from "../types/Enums/ERoleUserProject";
+import { Lazy } from "../types/Lazy";
+import { Ticket } from "./Ticket";
+import { UserProject } from "./UserProject";
+
+// Nécessaire pour utiliser l'enum
+registerEnumType(ERoleUserProject, {
+  name: "ERoleUserProject",
+});
 
 @ObjectType()
 @Entity()
 export class Project extends BaseEntity {
-    @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+  @Field(() => ID)
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @Field()
-    @Column({
-        length: 55
-    })
-    name!: string;
+  @Field()
+  @Column({
+    length: 55,
+  })
+  name!: string;
 
-    @Field()
-    @Column()
-    creationDate!: Date;
+  @Field()
+  @Column()
+  creationDate!: Date;
 
-    @Field(type => Int)
-    @Column()
-    timeEstimation!: number;
+  @Field(() => Int)
+  @Column()
+  timeEstimation!: number;
 
-    @Field(type => Int)
-    @Column()
-    timeSpent: number = 0;
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ default: 0 })
+  timeSpent!: number;
 
-    @Field(type => Int)
-    @Column()
-    percentageTimeSpent: number = 0;
+  @Field()
+  @Column({ default: true })
+  isActive!: boolean;
 
-    @Field(type => Int)
-    @Column()
-    percentageTaskAccomplished: number = 0;
+  @Field(() => [UserProject], { defaultValue: [] })
+  @OneToMany(() => UserProject, (userProject) => userProject.project, {
+    lazy: true,
+  })
+  userProject!: Lazy<UserProject[]>;
 
-    @Field()
-    @Column()
-    isClosed!: boolean;
-
-    @Field(() => User)
-    @ManyToOne(() => User, user => user.projectsCreated)
-    userAuthor: User; 
-
+  @Field(() => [Ticket])
+  @OneToMany(() => Ticket, (ticket) => ticket.project, { lazy: true })
+  tickets: Lazy<Ticket[]>;
 }
 
 @InputType()
-export class ProjectInputCreation {
-    @Field()
-    name!: string;
+export class ProjectInput {
+  @Field()
+  name!: string;
 
-    @Field()
-    isClosed!: boolean;
+  @Field(() => Int)
+  timeEstimation: number;
+}
 
-    @Field(type => Int)
-    timeEstimation : number;
+@InputType()
+export class UpdateProjectInput {
+  @Field()
+  projectId: number;
+
+  @Field({ nullable: true })
+  productOwnerId?: number;
+
+  @Field({ nullable: true })
+  timeSpent?: number;
+
+  @Field({ nullable: true })
+  timeEstimation?: number;
 }

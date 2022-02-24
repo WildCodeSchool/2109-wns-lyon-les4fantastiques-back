@@ -1,13 +1,21 @@
-import { Arg, Authorized, Ctx, Field, ID, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  ID,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { getRepository } from "typeorm";
 import { User, UserInputSignIn, UserInputSignUp } from "../models/User";
 import * as argon2 from "argon2";
 import { generateToken } from "../helpers/auth/token";
-import { ERole } from "../types";
 
 @Resolver(User)
 export class UsersResolver {
   private userRepo = getRepository(User);
+
   // QUERIES
 
   // Get de tous les users
@@ -22,15 +30,17 @@ export class UsersResolver {
   @Query(() => User)
   async getSignedInUser(@Ctx() context: { user: User }): Promise<User> {
     const user = context.user;
-    return await this.userRepo.findOne(user.id, { relations: [ "projectsCreated" ]}); // empêche de faire des appels à la bdd pour rien
+    return await this.userRepo.findOne(user.id, { relations: ["userProject"] });
   }
 
   // MUTATIONS
 
   // Inscription
   @Mutation(() => User)
-  async signup(@Arg("data", () => UserInputSignUp) user: UserInputSignUp): Promise<User> {
-    const newUser = this.userRepo.create(user);
+  async signup(
+    @Arg("data", () => UserInputSignUp) userInputSignUp: UserInputSignUp,
+  ): Promise<User> {
+    const newUser = this.userRepo.create(userInputSignUp);
     newUser.password = await argon2.hash(newUser.password);
     await newUser.save();
     return newUser;
@@ -38,10 +48,16 @@ export class UsersResolver {
 
   // Connexion
   @Mutation(() => String, { nullable: true })
-  async signin(@Arg("data", () => UserInputSignIn) user: UserInputSignIn): Promise<string> {
-    const userToSignIn = await this.userRepo.findOne({ email: user.email });
+  async signin(
+    @Arg("data", () => UserInputSignIn) userInputSignIn: UserInputSignIn,
+  ): Promise<string> {
+    const userToSignIn = await this.userRepo.findOne({
+      email: userInputSignIn.email,
+    });
     if (userToSignIn) {
-      if (await argon2.verify(userToSignIn.password, user.password)) {
+      if (
+        await argon2.verify(userToSignIn.password, userInputSignIn.password)
+      ) {
         const token = generateToken(userToSignIn.id);
         return token && token;
       } else {
