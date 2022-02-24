@@ -30,7 +30,7 @@ export class UsersResolver {
   @Query(() => User)
   async getSignedInUser(@Ctx() context: { user: User }): Promise<User> {
     const user = context.user;
-    return await this.userRepo.findOne(user.id, { relations: ["userProject"] }); // empêche de faire des appels à la bdd pour rien
+    return await this.userRepo.findOne(user.id, { relations: ["userProject"] });
   }
 
   // MUTATIONS
