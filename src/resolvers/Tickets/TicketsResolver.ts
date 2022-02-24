@@ -133,7 +133,6 @@ export class TicketsResolver {
     const ticketToUpdate = await this.ticketRepo.findOne(
       UpdateTicketInput.ticketId,
     );
-    // const project = await this.projectRepo.findOne(ticket.project);
     const userTicketToUpdate = await this.userTicketRepo.find({
       where: {
         ticket: ticketToUpdate,
