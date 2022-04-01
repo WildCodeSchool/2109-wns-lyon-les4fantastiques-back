@@ -1,4 +1,4 @@
 # EasyTicket back
 
 run
-`npm run docker`
+`yarn run docker`
