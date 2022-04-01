@@ -11,6 +11,7 @@ import { getRepository } from "typeorm";
 import { User, UserInputSignIn, UserInputSignUp } from "../models/User";
 import * as argon2 from "argon2";
 import { generateToken } from "../helpers/auth/token";
+import { ERole } from "../types/Enums/Erole";
 
 @Resolver(User)
 export class UsersResolver {
@@ -66,6 +67,21 @@ export class UsersResolver {
     } else {
       return null;
     }
+  }
+
+  // Role update
+  @Authorized("ADMIN")
+  @Mutation(() => User)
+  async updateRole(
+    @Arg("id", () => ID) id: number,
+    @Arg("role", () => String) role: string,
+  ): Promise<User | null> {
+    const userToUpdate = await this.userRepo.findOne(id);
+    if (userToUpdate) {
+      userToUpdate.role = role as ERole;
+    }
+    userToUpdate.save();
+    return userToUpdate;
   }
 
   // Suppression d'un utilisateur
