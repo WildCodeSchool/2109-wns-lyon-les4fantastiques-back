@@ -26,5 +26,5 @@ jobs:
         with:
           context: ./
           push: true
-          tags: rangodisco/easyticketback:latest
+          tags: easyticket01/easyticketback:latest
           file: ./dev.dockerfile
