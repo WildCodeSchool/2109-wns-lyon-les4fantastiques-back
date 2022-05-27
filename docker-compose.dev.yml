@@ -1,9 +1,10 @@
 version: "3"
 services:
   server:
-    build:
-      context: .
-      dockerfile: dev.dockerfile
+    #build:
+    #context: .
+    #dockerfile: dev.dockerfile
+    image: easyticket01/easyticketback
     ports:
       - 4000:4000
     volumes:
@@ -24,6 +25,6 @@ services:
     volumes:
       - /var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 20s
       retries: 10
