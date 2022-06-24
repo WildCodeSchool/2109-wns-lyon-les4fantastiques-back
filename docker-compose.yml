@@ -12,9 +12,6 @@ services:
       - .env
     depends_on:
       - db
-    volumes:
-      - ./src:/app/src/
-      - ./ormconfig.json:/app/ormconfig.json
   db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
