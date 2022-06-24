@@ -1,17 +1,17 @@
 version: "3"
 services:
   server:
-    build:
-      context: .
-      dockerfile: prod.dockerfile
+    #build:
+    #context: .
+    #dockerfile: prod.dockerfile
+    image: easyticket01/easyticketback
     ports:
       - 4000:4000
+    command: sh -c "yarn run"
+    env_file:
+      - .env
     depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./src:/app/src/
-      - ./ormconfig.json:/app/ormconfig.json
+      - db
   db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
@@ -21,8 +21,10 @@ services:
     volumes:
       - easyTicketDb:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
 volumes:
   easyTicketDb:
+
+

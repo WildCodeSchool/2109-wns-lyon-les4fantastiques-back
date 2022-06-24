@@ -27,4 +27,4 @@ jobs:
           context: ./
           push: true
           tags: easyticket01/easyticketback:latest
-          file: ./dev.dockerfile
+          file: ./prod.dockerfile
