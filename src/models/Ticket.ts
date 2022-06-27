@@ -39,6 +39,10 @@ export class Ticket extends BaseEntity {
 
   @Field()
   @Column()
+  status: string;
+
+  @Field()
+  @Column()
   timeEstimation!: number;
 
   @Field(() => Int)
@@ -82,6 +86,9 @@ export class TicketInputCreation {
 
   @Field()
   projectId!: number;
+
+  @Field()
+  status: string;
 }
 
 @InputType()

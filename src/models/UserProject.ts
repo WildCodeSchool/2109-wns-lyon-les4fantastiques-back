@@ -48,7 +48,7 @@ export class AddUserToProjectInput {
   projectId!: number;
 
   @Field()
-  userId!: number;
+  email!: string;
 
   @Field(() => ERoleUserProject)
   role!: ERoleUserProject;
