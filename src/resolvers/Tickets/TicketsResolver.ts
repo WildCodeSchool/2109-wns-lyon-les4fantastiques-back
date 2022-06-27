@@ -109,6 +109,7 @@ export class TicketsResolver {
         description: ticket.description,
         timeEstimation: ticket.timeEstimation,
         project: project,
+        status: ticket.status,
       });
       newTicket.creationDate = new Date();
       await newTicket.save();
@@ -116,7 +117,7 @@ export class TicketsResolver {
         user: context.user,
         ticket: newTicket,
       });
-      newUserTicket.save();
+      await newUserTicket.save();
       return newTicket;
     }
 
@@ -163,18 +164,19 @@ export class TicketsResolver {
           const userTicketToDelete = await this.userTicketRepo.findOne({
             where: { ticket: ticketToUpdate, role: ERoleUserTicket.ASSIGNEE },
           });
-          userTicketToDelete && this.userTicketRepo.delete(userTicketToDelete);
+          userTicketToDelete &&
+            (await this.userTicketRepo.delete(userTicketToDelete));
 
           const newUserTicket = this.userTicketRepo.create({
             ticket: ticketToUpdate,
             user: userToAssign,
             role: ERoleUserTicket.ASSIGNEE,
           });
-          newUserTicket.save();
+          await newUserTicket.save();
         }
       }
 
-      ticketToUpdate.save();
+      await ticketToUpdate.save();
       return ticketToUpdate;
     }
   }
@@ -206,7 +208,7 @@ export class TicketsResolver {
         ticket: ticketToUpdate,
         contentUrl: `${newFilename}-${filename}`,
       });
-      newPicture.save();
+      await newPicture.save();
       return newPicture.contentUrl;
     }
 
