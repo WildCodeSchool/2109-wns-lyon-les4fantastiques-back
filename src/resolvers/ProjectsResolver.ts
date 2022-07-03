@@ -65,8 +65,8 @@ export class ProjectsResolver {
       project: newProject,
       role: ERoleUserProject.AUTHOR,
     });
-    newUserProject.save();
-    newProject.save();
+    await newUserProject.save();
+    await newProject.save();
     return newProject;
   }
 
@@ -76,7 +76,7 @@ export class ProjectsResolver {
     @Arg("data", () => AddUserToProjectInput)
     addUserToProjectInput: AddUserToProjectInput,
     @Ctx() context: { user: User },
-  ): Promise<Project> {
+  ): Promise<Project | null> {
     const currentUserProject = await this.userProjectRepo.findOne({
       where: {
         user: context.user,
@@ -88,17 +88,20 @@ export class ProjectsResolver {
       const projectToUpdate = await this.projectRepo.findOne(
         addUserToProjectInput.projectId,
       );
-      const userToAdd = await this.userRepo.findOne(
-        addUserToProjectInput.userId,
-      );
+      const userToAdd = await this.userRepo.findOne({
+        where: { email: addUserToProjectInput.email },
+      });
+
+      if (!userToAdd || !projectToUpdate) {
+        throw new Error("Unable to add user");
+      }
       const newUserProject = this.userProjectRepo.create({
         user: userToAdd,
         project: projectToUpdate,
         role: addUserToProjectInput.role,
       });
 
-      newUserProject.save();
-      projectToUpdate.save();
+      await newUserProject.save();
 
       return projectToUpdate;
     }

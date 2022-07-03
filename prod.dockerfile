@@ -6,7 +6,6 @@ COPY ./package.json ./
 RUN yarn
 
 COPY src src
-COPY .env .env
 COPY tsconfig.json tsconfig.json
 COPY ormconfig.json ormconfig.json
 

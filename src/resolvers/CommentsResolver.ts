@@ -10,7 +10,6 @@ export class CommentsResolver {
   private commentRepo = getRepository(Comment);
   private userTicketRepo = getRepository(UserTicket);
   private ticketRepo = getRepository(Ticket);
-  private userRepo = getRepository(User);
 
   // QUERIES
 
@@ -33,7 +32,7 @@ export class CommentsResolver {
         author: context.user,
         content: commentInput.content,
       });
-      newComment.save();
+      await newComment.save();
       return newComment;
     }
 
