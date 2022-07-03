@@ -104,6 +104,9 @@ export class UpdateTicketInput {
 
   @Field({ nullable: true })
   userAssignedId?: number;
+
+  @Field({ nullable: true })
+  status?: string;
 }
 
 @InputType()

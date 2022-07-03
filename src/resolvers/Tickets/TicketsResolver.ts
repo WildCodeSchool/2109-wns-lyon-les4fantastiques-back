@@ -140,13 +140,15 @@ export class TicketsResolver {
         user: context.user,
       },
     });
-
     if (userTicketToUpdate) {
       if (UpdateTicketInput.timeSpent) {
         ticketToUpdate.timeSpent = UpdateTicketInput.timeSpent;
       }
       if (UpdateTicketInput.timeEstimation) {
         ticketToUpdate.timeEstimation = UpdateTicketInput.timeEstimation;
+      }
+      if (UpdateTicketInput.status) {
+        ticketToUpdate.status = UpdateTicketInput.status;
       }
       if (UpdateTicketInput.userAssignedId) {
         const userToAssign = await this.userRepo.findOne(
@@ -159,14 +161,12 @@ export class TicketsResolver {
             role: ERoleUserTicket.ASSIGNEE,
           },
         });
-
         if (!userTicketToUpdate) {
           const userTicketToDelete = await this.userTicketRepo.findOne({
             where: { ticket: ticketToUpdate, role: ERoleUserTicket.ASSIGNEE },
           });
           userTicketToDelete &&
             (await this.userTicketRepo.delete(userTicketToDelete));
-
           const newUserTicket = this.userTicketRepo.create({
             ticket: ticketToUpdate,
             user: userToAssign,
@@ -200,8 +200,11 @@ export class TicketsResolver {
 
     if (userTicket) {
       const newFilename = uuidv4();
+      console.log(newFilename);
       await createReadStream().pipe(
-        createWriteStream(__dirname + `/../uploads/${newFilename}-${filename}`),
+        createWriteStream(
+          __dirname + `/../../uploads/${newFilename}-${filename}`,
+        ),
       );
 
       const newPicture = this.pictureRepo.create({
